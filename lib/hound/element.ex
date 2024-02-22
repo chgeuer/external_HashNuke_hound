@@ -26,7 +26,7 @@ defmodule Hound.Element do
   end
   def from_response([{"ELEMENT", uuid}]), do: %__MODULE__{uuid: uuid}
   def from_response([{"element-" <> _id, uuid}]), do: %__MODULE__{uuid: uuid}
-  def from_response(value), do: raise Hound.InvalidElementError, value: value
+  def from_response(value), do: raise(Hound.InvalidElementError, value: value)
 end
 
 defimpl Jason.Encoder, for: Hound.Element do
