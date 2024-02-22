@@ -45,7 +45,7 @@ defmodule Hound.ResponseParser do
   end
   def handle_response(mod, _path, _code, %{"value" => %{"message" => message} = value}) do
     if mod.warning?(message) do
-      Logger.warn(message)
+      Logger.warning(message)
       message
     else
       mod.handle_error(value)
