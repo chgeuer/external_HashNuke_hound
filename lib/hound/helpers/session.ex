@@ -81,12 +81,13 @@ defmodule Hound.Helpers.Session do
 
   The following options can be passed to `start_session`:
 
-    * `:browser` - The browser to be used (`"chrome"` | `"chrome_headless"` | `"phantomjs"` | `"firefox"`)
+    * `:browser` - The browser to be used (`"chrome"` | `"chrome_headless"` | `"phantomjs"` | `"firefox"` | `"edge"`)
     * `:user_agent` - The user agent string that will be used for the requests.
       The following atoms can also be passed
         * `:firefox_desktop` (aliased to `:firefox`)
         * `:chrome_desktop` (aliased to `:chrome`)
         * `:phantomjs`
+        * `:edge`
         * `:chrome_android_sp` (aliased to `:android`)
         * `:safari_iphone` (aliased to `:iphone`)
     * `:metadata` - The metadata to be included in the requests.
@@ -114,12 +115,10 @@ defmodule Hound.Helpers.Session do
       raise "could not find a session for process #{inspect self()}"
   end
 
-
+  
   @doc false
   def current_session_name do
       Hound.SessionServer.current_session_name(self()) ||
         raise "could not find a session for process #{inspect self()}"
-
-
   end
 end

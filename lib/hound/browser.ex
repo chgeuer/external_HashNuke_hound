@@ -48,6 +48,9 @@ defmodule Hound.Browser do
   def user_agent(:safari_iphone) do
     "Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25"
   end
+  def user_agent(:edge) do
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0"
+  end
   def user_agent(:default) do
     ""
   end
@@ -65,5 +68,6 @@ defmodule Hound.Browser do
   defp browser("chrome"),           do: Hound.Browser.Chrome
   defp browser("chrome_headless"),  do: Hound.Browser.ChromeHeadless
   defp browser("phantomjs"),        do: Hound.Browser.PhantomJS
+  defp browser("edge"),             do: Hound.Browser.Edge
   defp browser(_),                  do: Hound.Browser.Default
 end

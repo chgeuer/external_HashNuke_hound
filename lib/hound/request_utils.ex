@@ -35,11 +35,35 @@ defmodule Hound.RequestUtils do
         {[], ""}
     end
 
-    :hackney.request(type, url, headers, body, [:with_body | http_options()])
+    hackney_http_options = http_options()
+
+    # IO.inspect(%{
+    #   type: type,
+    #   url: url, 
+    #   headers: headers, 
+    #   body: body, 
+    #   http_options: [:with_body | hackney_http_options]
+    # }, label: :hackney_request)
+
+    :hackney.request(type, url, headers, body, [:with_body | hackney_http_options])
+    #|> IO.inspect(label: :hackney_response1)
     |> handle_response({url, path, type}, options)
+    #|> IO.inspect(label: :hackney_response2)
   end
 
   defp handle_response({:ok, code, headers, body}, {url, path, type}, options) do
+    # IO.inspect(%{
+    #     code: code, 
+    #     headers: headers, 
+    #     body: body, 
+    #     url: url, 
+    #     path: path, 
+    #     type: type, 
+    #     options: options,
+    #     parsed: Hound.ResponseParser.parse(response_parser(), path, code, headers, body)
+    #   }, 
+    #   label: :handle_response)
+
     case Hound.ResponseParser.parse(response_parser(), path, code, headers, body) do
       :error ->
         raise """
@@ -59,7 +83,9 @@ defmodule Hound.RequestUtils do
   end
 
   defp response_parser do
-    {:ok, driver_info} = Hound.driver_info()
+    {:ok, driver_info} = 
+      Hound.driver_info()
+      #|> IO.inspect(label: :response_parser)
 
     case {driver_info.driver, driver_info.browser} do
       {"selenium", "chrome" <> _headless} ->
