@@ -4,18 +4,16 @@ defmodule Hound.Supervisor do
   use Supervisor
 
   def start_link(options \\ []) do
-    :supervisor.start_link(__MODULE__, [options])
+    Supervisor.start_link(__MODULE__, [options])
   end
 
-
+  @impl Supervisor
   def init([options]) do
     children = [
-      worker(Hound.ConnectionServer, [options]),
-      worker(Hound.SessionServer, [])
+      %{id: Hound.ConnectionServer, start: {Hound.ConnectionServer, :start_link, [options]}},
+      %{id: Hound.SessionServer, start: {Hound.SessionServer, :start_link, []}}
     ]
 
-    # See http://elixir-lang.org/docs/stable/Supervisor.Behaviour.html
-    # for other strategies and supported options
-    supervise(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end
