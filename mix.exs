@@ -27,7 +27,7 @@ defmodule Hound.Mixfile do
 
   defp deps do
     [
-      {:hackney, "~> 1.5"},
+      {:req, "~> 0.4.11"},
       {:jason,  "~> 1.1"},
       {:earmark, "~> 1.2", only: :dev},
       {:ex_doc,  "~> 0.16", only: :dev}

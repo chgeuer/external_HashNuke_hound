@@ -13,12 +13,10 @@ defmodule Hound.ConnectionServer do
         {4444, "wd/hub/", "firefox"}
     end
 
-
     browser = options[:browser] || Application.get_env(:hound, :browser, default_browser)
     host = options[:host] || Application.get_env(:hound, :host, "http://localhost")
     port = options[:port] || Application.get_env(:hound, :port, default_port)
     path_prefix = options[:path_prefix] || Application.get_env(:hound, :path_prefix, default_path_prefix)
-
 
     driver_info = %{
       :driver => driver,

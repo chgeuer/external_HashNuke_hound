@@ -23,9 +23,9 @@ defmodule Hound.RequestUtils do
     make_req(type, path, params, options, retries - 1)
   end
 
-  defp send_req(type, path, params, options) do
+  defp send_req(method, path, params, options) do
     url = get_url(path)
-    has_body = params != %{} && type == :post
+    has_body = params != %{} && method == :post
     {headers, body} = cond do
        has_body && options[:json_encode] != false ->
         {[{"Content-Type", "text/json"}], Jason.encode!(params)}
@@ -35,35 +35,23 @@ defmodule Hound.RequestUtils do
         {[], ""}
     end
 
-    hackney_http_options = http_options()
-
-    # IO.inspect(%{
-    #   type: type,
-    #   url: url, 
-    #   headers: headers, 
-    #   body: body, 
-    #   http_options: [:with_body | hackney_http_options]
-    # }, label: :hackney_request)
-
-    :hackney.request(type, url, headers, body, [:with_body | hackney_http_options])
-    #|> IO.inspect(label: :hackney_response1)
-    |> handle_response({url, path, type}, options)
-    #|> IO.inspect(label: :hackney_response2)
+    request = 
+      Req.Request.new(
+        method: method, 
+        url: url, 
+        headers: headers, 
+        body: body, 
+        options: http_options())
+    
+    case Req.request(request) do
+      {:ok, %Req.Response{status: code, headers: response_headers, body: body}} -> 
+        response_headers = response_headers |> Enum.map(fn {h, [v]} -> {h,v} end)
+        handle_response({:ok, code, response_headers, body}, {url, path, method}, options)
+      {:error, reason} -> handle_response({:error, reason}, {url, path, method}, options)
+    end
   end
 
   defp handle_response({:ok, code, headers, body}, {url, path, type}, options) do
-    # IO.inspect(%{
-    #     code: code, 
-    #     headers: headers, 
-    #     body: body, 
-    #     url: url, 
-    #     path: path, 
-    #     type: type, 
-    #     options: options,
-    #     parsed: Hound.ResponseParser.parse(response_parser(), path, code, headers, body)
-    #   }, 
-    #   label: :handle_response)
-
     case Hound.ResponseParser.parse(response_parser(), path, code, headers, body) do
       :error ->
         raise """
@@ -85,7 +73,6 @@ defmodule Hound.RequestUtils do
   defp response_parser do
     {:ok, driver_info} = 
       Hound.driver_info()
-      #|> IO.inspect(label: :response_parser)
 
     case {driver_info.driver, driver_info.browser} do
       {"selenium", "chrome" <> _headless} ->
