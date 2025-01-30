@@ -8,12 +8,10 @@ defmodule Hound.SessionServer do
     GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
-
   def session_for_pid(pid, opts) do
     current_session_id(pid) ||
       change_current_session_for_pid(pid, :default, opts)
   end
-
 
   def current_session_id(pid) do
     case :ets.lookup(@name, pid) do
@@ -33,11 +31,9 @@ defmodule Hound.SessionServer do
     end
   end
 
-
   def change_current_session_for_pid(pid, session_name, opts) do
     GenServer.call(@name, {:change_session, pid, session_name, opts}, genserver_timeout())
   end
-
 
   def all_sessions_for_pid(pid) do
     case :ets.lookup(@name, pid) do
@@ -45,7 +41,6 @@ defmodule Hound.SessionServer do
       [] -> %{}
     end
   end
-
 
   def destroy_sessions_for_pid(pid) do
     GenServer.call(@name, {:destroy_sessions, pid}, 60000)
@@ -57,7 +52,6 @@ defmodule Hound.SessionServer do
     :ets.new(@name, [:set, :named_table, :protected, read_concurrency: true])
     {:ok, state}
   end
-
 
   def handle_call({:change_session, pid, session_name, opts}, _from, state) do
     {:ok, driver_info} = Hound.driver_info
@@ -98,7 +92,7 @@ defmodule Hound.SessionServer do
   defp create_session(driver_info, opts) do
     case Hound.Session.create_session(driver_info[:browser], opts) do
       {:ok, session_id} -> session_id
-      {:error, reason} -> raise "could not create a new session: #{reason}, check webdriver is running"
+      {:error, reason} -> raise "could not create a new session: #{inspect reason}, opts: #{inspect opts}, check webdriver is running"
     end
   end
 

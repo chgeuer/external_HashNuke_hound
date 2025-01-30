@@ -35,16 +35,16 @@ defmodule Hound.RequestUtils do
         {[], ""}
     end
 
-    request = 
+    request =
       Req.Request.new(
-        method: method, 
-        url: url, 
-        headers: headers, 
-        body: body, 
+        method: method,
+        url: url,
+        headers: headers,
+        body: body,
         options: http_options())
-    
-    case Req.request(request) do
-      {:ok, %Req.Response{status: code, headers: response_headers, body: body}} -> 
+
+    case request |> Req.request() do
+      {:ok, %Req.Response{status: code, headers: response_headers, body: body}} ->
         response_headers = response_headers |> Enum.map(fn {h, [v]} -> {h,v} end)
         handle_response({:ok, code, response_headers, body}, {url, path, method}, options)
       {:error, reason} -> handle_response({:error, reason}, {url, path, method}, options)
@@ -71,7 +71,7 @@ defmodule Hound.RequestUtils do
   end
 
   defp response_parser do
-    {:ok, driver_info} = 
+    {:ok, driver_info} =
       Hound.driver_info()
 
     case {driver_info.driver, driver_info.browser} do

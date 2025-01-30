@@ -8,7 +8,6 @@ defmodule Hound do
     Hound.Supervisor.start_link
   end
 
-
   @doc false
   def driver_info do
     Hound.ConnectionServer.driver_info
@@ -18,7 +17,6 @@ defmodule Hound do
   def configs do
     Hound.ConnectionServer.configs
   end
-
 
   @doc "See `Hound.Helpers.Session.start_session/1`"
   defdelegate start_session,            to: Hound.Helpers.Session
